@@ -1,0 +1,65 @@
+# Конфигурация извлечения признаков
+feature_extraction:
+  use_cache: true
+  cache_dir: "./cache"
+  device: "cuda"
+  dim_reduction_method: "PCA"
+  text_embedding_dim: 30
+  image_embedding_dim: 60
+  batch_size: 32
+  log_level: "INFO"
+
+# Конфигурация предобработки данных
+preprocessing:
+  # Порог для бинаризации целевой переменной
+  # Может быть числом или строкой: 'median', 'mean', 'percentile_75'
+  target_threshold: 60
+
+  # Порог корреляции для исключения признаков
+  correlation_threshold: 0.90
+
+  # Параметры разделения данных
+  test_size: 0.2
+  random_state: 42
+  stratify: true
+
+# Конфигурация обучения моделей
+training:
+  # Веса классов для несбалансированных данных
+  # 'balanced', None, или словарь {0: вес_класса_0, 1: вес_класса_1}
+  class_weight: "balanced"
+
+  # Директория для сохранения моделей
+  model_dir: "models"
+
+  # Настройки для FLAML AutoML
+  automl_settings:
+    time_budget: 300          # Бюджет в секундах
+    metric: "f1"  # Оптимизируемая метрика
+    task: "classification"     # Задача бинарной классификации
+    estimator_list:            # Список оцениваемых алгоритмов
+      - "lgbm"
+      - "xgboost"
+      - "catboost"
+      - "rf"
+      - "extra_tree"
+    n_jobs: -1                 # Использовать все доступные ядра
+    log_file_name: "tweet_classification.log"  # Файл логирования
+    ensemble: true             # Включить ансамблирование
+    eval_method: "cv"          # Кросс-валидация
+    n_splits: 5                # Количество разбиений для кросс-валидации
+    verbose: 1                 # Уровень логирования
+    seed: 42                   # Для воспроизводимости результатов
+
+# Конфигурация оценки моделей
+evaluation:
+  # Пороговое значение для бинаризации вероятностей при предсказании
+  prediction_threshold: 0.5
+
+# Конфигурация MLflow
+mlflow:
+  # Директория для артефактов MLflow
+  artifact_dir: "mlflow-artifacts"
+
+  # Название эксперимента
+  experiment_name: "tweet-classification"
