@@ -1,0 +1,53 @@
+tweet_features:
+  use_cache: true
+  cache_dir: "./cache"
+  device: "cuda"
+  batch_size: 32
+  log_level: "INFO"
+
+data_split:
+  test_size: 0.2
+  random_state: 42
+
+target:
+  threshold: 60
+
+paths:
+  models_dir: "./models"
+  logs_dir: "./logs"
+  visualizations_dir: "./visualizations"
+
+dimensionality_reduction:
+  text_embeddings:
+    method: "pca"
+    n_components: 50
+  quoted_text_embeddings:
+    method: "pca"
+    n_components: 50
+  image_embeddings:
+    method: "pca"
+    n_components: 80
+
+feature_selection:
+  method: "exclude_features"
+  exclude_list: []
+
+automl_settings:
+  time_budget: 900
+  metric: "ap"
+  task: "classification"
+  estimator_list:
+    - "lgbm"
+    - "xgboost"
+    - "catboost"
+    - "rf"
+    - "extra_tree"
+  log_file_name: "automl.log"
+  n_jobs: -1
+  ensemble: true
+  eval_method: "cv"
+  n_splits: 5
+  verbose: 1
+  seed: 42
+
+data_path: "./dataset/tweet_dataset.json"
